@@ -8,7 +8,7 @@ function trackKeywordRanks() {
     domain: "domain.com", // change to your domain
     country: "us",                        // e.g. 'us', 'in', etc.
     language: "en",                       // e.g. 'en'
-    apiKey: "ADD-API_KEY" // replace with your key
+    apiKey: "ADD-API-KEY" // replace with your key
   };
 
   for (let i = 0; i < keywords.length; i++) {
