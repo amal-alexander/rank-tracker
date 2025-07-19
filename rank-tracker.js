@@ -1,14 +1,14 @@
 function trackKeywordRanks() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  const keywords = sheet.getRange("A5:A").getValues().flat().filter(k => k);
+  const keywords = sheet.getRange("A5:A104").getValues().flat().filter(k => k); // max 100
   const positions = [];
   const urls = [];
 
   const config = {
     domain: "domain.com", // change to your domain
-    country: "in",         // country code like 'us', 'in', etc.
-    language: "en",        // language code
-    apiKey: "ADD-YOUR_API-KEY" // replace this!
+    country: "us",                        // e.g. 'us', 'in', etc.
+    language: "en",                       // e.g. 'en'
+    apiKey: "ADD-API_KEY" // replace with your key
   };
 
   for (let i = 0; i < keywords.length; i++) {
@@ -17,14 +17,13 @@ function trackKeywordRanks() {
     positions.push([result.position]);
     urls.push([result.url]);
 
-    // Sleep to avoid hitting API too fast
-    Utilities.sleep(1000);
+    Utilities.sleep(1000); // delay to avoid SerpApi rate limits
   }
 
-  sheet.getRange(5, 2, positions.length).setValues(positions); // Column B
-  sheet.getRange(5, 3, urls.length).setValues(urls);           // Column C
+  sheet.getRange(5, 2, positions.length).setValues(positions); // B column
+  sheet.getRange(5, 3, urls.length).setValues(urls);           // C column
 
-  // === REPORTING SECTION ===
+  // === METRICS SUMMARY ===
   let ranking = 0;
   let topTen = 0;
   const totalKeywords = positions.length;
@@ -57,13 +56,14 @@ function trackKeywordRanks() {
 
   Logger.log(report);
 
-  const reportStartRow = 5 + totalKeywords + 2; // leave a gap
+  const reportStartRow = 5 + totalKeywords + 2; // leave space
   sheet.getRange(reportStartRow, 1).setValue(report);
 }
 
+
 function getKeywordPosition(keyword, config) {
   const base = "https://serpapi.com/search.json";
-  const params = `?engine=google&q=${encodeURIComponent(keyword)}&hl=${config.language}&gl=${config.country}&api_key=${config.apiKey}`;
+  const params = `?engine=google&q=${encodeURIComponent(keyword)}&hl=${config.language}&gl=${config.country}&num=100&api_key=${config.apiKey}`;
   const url = base + params;
 
   try {
